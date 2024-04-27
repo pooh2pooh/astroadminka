@@ -1,0 +1,6 @@
+{
+    "title": "Благоприятное время для сделок",
+    "url": "/core/get-cycle.php?name=periods_make_money",
+    "tooltip": "",
+    "trigger": "periods_make_money"
+}

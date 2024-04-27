@@ -1,0 +1,25 @@
+{
+    "title": "VIP",
+    "price": "500",
+    "url": "\/core\/get-subscribe.php?name=vip",
+    "allow_cycles": [
+        "blood_moon",
+        "chinese_medicine_season",
+        "chinese_new_year",
+        "daily_biorhythms",
+        "eclipse",
+        "eclipse_corridor",
+        "eight_year",
+        "ekadashi",
+        "eleven_year",
+        "fifteen_year",
+        "four_hours",
+        "live_biorythms",
+        "nineteen_year",
+        "periods_make_money",
+        "planetary_clock",
+        "retrograde_mercury",
+        "seventeen_year",
+        "week_day"
+    ]
+}

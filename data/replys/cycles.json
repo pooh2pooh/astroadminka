@@ -1,0 +1,11 @@
+{
+    "title": "Циклы",
+    "url": "/core/get-reply.php?name=cycles",
+    "message": "Все циклы:",
+    "keyboard": [
+        {
+            "text": "Главное меню",
+            "callback": "main_menu"
+        }
+    ]
+}

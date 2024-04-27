@@ -1,0 +1,31 @@
+{
+    "title": "Настройки",
+    "url": "/core/get-reply.php?name=settings",
+    "message": "Ваши настройки:\nИмя: {full_name}\nЧасовой пояс: {timezone}\nДолгота: {latitude}, Широта: {longitude}\nДата рождения: {birth_day} {birth_time}\nМесто рождения: {birth_place}",
+    "keyboard": [
+        {
+            "text": "Имя",
+            "callback": "set_full_name"
+        },
+        {
+            "text": "Местоположение",
+            "callback": "set_location"
+        },
+        {
+            "text": "Дата рождения",
+            "callback": "set_birth_day"
+        },
+        {
+            "text": "Время рождения",
+            "callback": "set_birth_time"
+        },
+        {
+            "text": "Место рождения",
+            "callback": "set_birth_place"
+        },
+        {
+            "text": "Главное меню",
+            "callback": "main_menu"
+        }
+    ]
+}

@@ -1,0 +1,34 @@
+{
+    "title": "Планетарные часы",
+    "url": "/core/get-cycle.php?name=planetary_clock",
+    "tooltip": "",
+    "trigger": "sunrise_sunset",
+    "day": {
+        "0": "Здесь будет информация о 1 дневном планетарном часе\nhttps://telegra.ph/Planetarnye-chasy-i-tonkaya-nastrojka-vashego-dnya-10-28",
+        "1": "Здесь будет информация о 2 дневном планетарном часе\nhttps://telegra.ph/Planetarnye-chasy-i-tonkaya-nastrojka-vashego-dnya-10-28",
+        "2": "Здесь будет информация о 3 дневном планетарном часе\nhttps://telegra.ph/Planetarnye-chasy-i-tonkaya-nastrojka-vashego-dnya-10-28",
+        "3": "Здесь будет информация о 4 дневном планетарном часе\nhttps://telegra.ph/Planetarnye-chasy-i-tonkaya-nastrojka-vashego-dnya-10-28",
+        "4": "Здесь будет информация о 5 дневном планетарном часе\nhttps://telegra.ph/Planetarnye-chasy-i-tonkaya-nastrojka-vashego-dnya-10-28",
+        "5": "Здесь будет информация о 6 дневном планетарном часе\nhttps://telegra.ph/Planetarnye-chasy-i-tonkaya-nastrojka-vashego-dnya-10-28",
+        "6": "Здесь будет информация о 7 дневном планетарном часе\nhttps://telegra.ph/Planetarnye-chasy-i-tonkaya-nastrojka-vashego-dnya-10-28",
+        "7": "Здесь будет информация о 8 дневном планетарном часе\nhttps://telegra.ph/Planetarnye-chasy-i-tonkaya-nastrojka-vashego-dnya-10-28",
+        "8": "Здесь будет информация о 9 дневном планетарном часе\nhttps://telegra.ph/Planetarnye-chasy-i-tonkaya-nastrojka-vashego-dnya-10-28",
+        "9": "Здесь будет информация о 10 дневном планетарном часе\nhttps://telegra.ph/Planetarnye-chasy-i-tonkaya-nastrojka-vashego-dnya-10-28",
+        "10": "Здесь будет информация о 11 дневном планетарном часе\nhttps://telegra.ph/Planetarnye-chasy-i-tonkaya-nastrojka-vashego-dnya-10-28",
+        "11": "Здесь будет информация о 12 дневном планетарном часе\nhttps://telegra.ph/Planetarnye-chasy-i-tonkaya-nastrojka-vashego-dnya-10-28"
+    },
+    "night": {
+        "0": "Здесь будет информация о 1 ночном планетарном часе\nhttps://telegra.ph/Planetarnye-chasy-i-tonkaya-nastrojka-vashego-dnya-10-28",
+        "1": "Здесь будет информация о 2 ночном планетарном часе\nhttps://telegra.ph/Planetarnye-chasy-i-tonkaya-nastrojka-vashego-dnya-10-28",
+        "2": "Здесь будет информация о 3 ночном планетарном часе\nhttps://telegra.ph/Planetarnye-chasy-i-tonkaya-nastrojka-vashego-dnya-10-28",
+        "3": "Здесь будет информация о 4 ночном планетарном часе\nhttps://telegra.ph/Planetarnye-chasy-i-tonkaya-nastrojka-vashego-dnya-10-28",
+        "4": "Здесь будет информация о 5 ночном планетарном часе\nhttps://telegra.ph/Planetarnye-chasy-i-tonkaya-nastrojka-vashego-dnya-10-28",
+        "5": "Здесь будет информация о 6 ночном планетарном часе\nhttps://telegra.ph/Planetarnye-chasy-i-tonkaya-nastrojka-vashego-dnya-10-28",
+        "6": "Здесь будет информация о 7 ночном планетарном часе\nhttps://telegra.ph/Planetarnye-chasy-i-tonkaya-nastrojka-vashego-dnya-10-28",
+        "7": "Здесь будет информация о 8 ночном планетарном часе\nhttps://telegra.ph/Planetarnye-chasy-i-tonkaya-nastrojka-vashego-dnya-10-28",
+        "8": "Здесь будет информация о 9 ночном планетарном часе\nhttps://telegra.ph/Planetarnye-chasy-i-tonkaya-nastrojka-vashego-dnya-10-28",
+        "9": "Здесь будет информация о 10 ночном планетарном часе\nhttps://telegra.ph/Planetarnye-chasy-i-tonkaya-nastrojka-vashego-dnya-10-28",
+        "10": "Здесь будет информация о 11 ночном планетарном часе\nhttps://telegra.ph/Planetarnye-chasy-i-tonkaya-nastrojka-vashego-dnya-10-28",
+        "11": "Здесь будет информация о 12 ночном планетарном часе\nhttps://telegra.ph/Planetarnye-chasy-i-tonkaya-nastrojka-vashego-dnya-10-28"
+    }
+}

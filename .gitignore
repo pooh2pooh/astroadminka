@@ -1,0 +1,9 @@
+backup/
+bot/env/
+bot/token
+
+data/activity_data/*
+!data/activity_data/week.sample.json
+
+data/users/*
+!data/users/user.sample.json

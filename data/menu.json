@@ -1,0 +1,58 @@
+{
+    "links": [
+        {
+            "title": "Активы",
+            "url": "/features/dashboard.php",
+            "icon": "graph-up",
+            "tooltip": "Статистика использования"
+        },
+        {
+            "title": "Подписки",
+            "buttons": [
+                {
+                    "title": "Создать подписку",
+                    "url": "/core/get-subscribe.php?name=new",
+                    "icon": "plus-circle",
+                    "tooltip": "Создать подписку"
+                }
+            ],
+            "items_from_dir": "../data/subscriptions/"
+        },
+        {
+            "title": "Ответы",
+            "buttons": [
+                {
+                    "title": "Создать ответ",
+                    "url": "/empty.php",
+                    "icon": "plus-circle",
+                    "tooltip": "Создать ответ"
+                }
+            ],
+            "items_from_dir": "../data/replys/"
+        },
+        {
+            "title": "Циклы",
+            "buttons": [
+                {
+                    "title": "Создать цикл",
+                    "url": "/empty.php",
+                    "icon": "plus-circle",
+                    "tooltip": "Создать цикл"
+                }
+            ],
+            "items_from_dir": "../data/cycles/"
+        },
+        {
+            "title": "Календари",
+            "buttons": [
+                {
+                    "title": "Создать календарь",
+                    "url": "/core/get-calendar.php?name=new",
+                    "icon": "plus-circle",
+                    "tooltip": "Создать календарь"
+                }
+            ],
+            "items_from_dir": "../data/calendars/"
+        }
+    ]
+}

@@ -1,0 +1,12 @@
+{
+    "title": "Гость",
+    "price": "0",
+    "url": "\/core\/get-subscribe.php?name=default",
+    "allow_cycles": [
+        "blood_moon",
+        "chinese_medicine_season",
+        "chinese_new_year",
+        "daily_biorhythms",
+        "eclipse"
+    ]
+}

@@ -1,0 +1,6 @@
+{
+    "title": "Цикл крови по Луне",
+    "url": "/core/get-cycle.php?name=blood_moon",
+    "tooltip": "",
+    "trigger": "blood_moon"
+}
