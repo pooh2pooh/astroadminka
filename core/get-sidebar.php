@@ -13,7 +13,7 @@
           echo '<li class="nav-item">';
           $tooltip = isset($link['tooltip']) ? (strlen($link['tooltip']) ? 'data-bs-placement="right" data-bs-toggle="tooltip" data-bs-title="' . $link['tooltip'] .'" data-bs-delay=\'{"show":250,"hide":0}\'' : '') : '';
           echo '<a hx-get="' . $link['url'] . '" hx-trigger="click" hx-target="#main_window" hx-indicator="#indicator_main_window" class="nav-link d-flex align-items-center gap-2" aria-current="page" href="#" ' . $tooltip . '" data-bs-dismiss="offcanvas" data-bs-target="#sidebarMenu">';
-          echo '<svg class="bi"><use xlink:href="icons.svg#' . $link['icon'] . '"/></svg>';
+          echo '<svg class="bi"><use xlink:href="/assets/icons.svg#' . $link['icon'] . '"/></svg>';
           echo $link['title'];
           echo '</a>';
           echo '</li>';
@@ -25,7 +25,7 @@
           foreach ($link['buttons'] as $button) {
               $tooltip = isset($button['tooltip']) ? (strlen($button['tooltip']) ? 'data-bs-toggle="tooltip" data-bs-title="' . $button['tooltip'] .'"' : '') : '';
               echo '<a class="link-secondary" hx-get="' . $button['url'] . '" hx-trigger="click" hx-target="#main_window" hx-indicator="#indicator_main_window" aria-label="' . $button['title'] . '" ' . $tooltip . '>';
-              echo '<svg class="bi"><use xlink:href="icons.svg#' . $button['icon'] . '"/></svg>';
+              echo '<svg class="bi"><use xlink:href="/assets/icons.svg#' . $button['icon'] . '"/></svg>';
               echo '</a>';
           }
         }
@@ -51,7 +51,7 @@
                     echo '<li class="nav-item">';
                     $tooltip = isset($cycle['tooltip']) ? (strlen($cycle['tooltip']) ? 'data-bs-placement="right" data-bs-toggle="tooltip" data-bs-title="' . $cycle['tooltip'] .'" data-bs-delay="{\'show\':250,\'hide\':0}\"' : '') : '';
                     echo '<a hx-get="' . $cycle['url'] . '" hx-trigger="click" hx-target="#main_window" hx-indicator="#indicator_main_window" class="nav-link d-flex align-items-center gap-2" aria-current="page" href="#" ' . $tooltip . ' data-bs-dismiss="offcanvas" data-bs-target="#sidebarMenu">';
-                    echo isset($cycle['icon']) && $cycle['icon'] !== '' ? '<svg class="bi"><use xlink:href="icons.svg#' . $cycle['icon'] . '"/></svg>' : '';
+                    echo isset($cycle['icon']) && $cycle['icon'] !== '' ? '<svg class="bi"><use xlink:href="/assets/icons.svg#' . $cycle['icon'] . '"/></svg>' : '';
                     echo $cycle['title'];
                     echo '</a>';
                     echo '</li>';
@@ -71,7 +71,7 @@
 <ul class="nav flex-column mb-auto">
   <li class="nav-item">
     <a class="nav-link d-flex align-items-center gap-2" href="#">
-      <svg class="bi"><use xlink:href="icons.svg#question-circle"/></svg>
+      <svg class="bi"><use xlink:href="/assets/icons.svg#question-circle"/></svg>
       Справка
     </a>
   </li>

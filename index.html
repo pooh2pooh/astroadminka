@@ -13,8 +13,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.min.css" rel="stylesheet">
 
     <!-- Custom styles for this template -->
-    <link href="style.css" rel="stylesheet">
-    <link href="dashboard.css" rel="stylesheet">
+    <link href="/assets/css/style.css" rel="stylesheet">
+    <link href="/assets/css/dashboard.css" rel="stylesheet">
 
     <style>
       .htmx-indicator{
@@ -37,29 +37,29 @@
               aria-expanded="false"
               data-bs-toggle="dropdown"
               aria-label="Цветовая схема (авто)">
-        <svg class="bi my-1 theme-icon-active" width="1em" height="1em"><use href="icons.svg#circle-half"></use></svg>
+        <svg class="bi my-1 theme-icon-active" width="1em" height="1em"><use href="/assets/icons.svg#circle-half"></use></svg>
         <span class="visually-hidden" id="bd-theme-text">Цветовая схема</span>
       </button>
       <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="bd-theme-text">
         <li>
           <button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="light" aria-pressed="false">
-            <svg class="bi me-2 opacity-50" width="1em" height="1em"><use href="icons.svg#sun-fill"></use></svg>
+            <svg class="bi me-2 opacity-50" width="1em" height="1em"><use href="/assets/icons.svg#sun-fill"></use></svg>
             Светлая
-            <svg class="bi ms-auto d-none" width="1em" height="1em"><use href="icons.svg#check2"></use></svg>
+            <svg class="bi ms-auto d-none" width="1em" height="1em"><use href="/assets/icons.svg#check2"></use></svg>
           </button>
         </li>
         <li>
           <button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="dark" aria-pressed="false">
-            <svg class="bi me-2 opacity-50" width="1em" height="1em"><use href="icons.svg#moon-stars-fill"></use></svg>
+            <svg class="bi me-2 opacity-50" width="1em" height="1em"><use href="/assets/icons.svg#moon-stars-fill"></use></svg>
             Тёмная
-            <svg class="bi ms-auto d-none" width="1em" height="1em"><use href="icons.svg#check2"></use></svg>
+            <svg class="bi ms-auto d-none" width="1em" height="1em"><use href="/assets/icons.svg#check2"></use></svg>
           </button>
         </li>
         <li>
           <button type="button" class="dropdown-item d-flex align-items-center active" data-bs-theme-value="auto" aria-pressed="true">
-            <svg class="bi me-2 opacity-50" width="1em" height="1em"><use href="icons.svg#circle-half"></use></svg>
+            <svg class="bi me-2 opacity-50" width="1em" height="1em"><use href="/assets/icons.svg#circle-half"></use></svg>
             Авто
-            <svg class="bi ms-auto d-none" width="1em" height="1em"><use href="icons.svg#check2"></use></svg>
+            <svg class="bi ms-auto d-none" width="1em" height="1em"><use href="/assets/icons.svg#check2"></use></svg>
           </button>
         </li>
       </ul>
@@ -71,10 +71,10 @@
           hx-trigger="load"
           hx-swap="innerHTML"
           hx-indicator="#indicator_name">
-        <img id="indicator_name" class="htmx-indicator" src="/loader.gif" width="32"/></span></a>
+        <img id="indicator_name" class="htmx-indicator" src="/assets/loader.gif" width="32"/></span></a>
 
       <div hx-get="/core/get-status.php" hx-trigger="every 4s" hx-swap="innerHTML" class="px-2">
-        <img src="/loader.gif" width="32"/>
+        <img src="/assets/loader.gif" width="32"/>
       </div>
 
       <ul class="navbar-nav flex-row d-md-none">
@@ -85,7 +85,7 @@
         </li>
         <li class="nav-item text-nowrap">
           <button class="nav-link px-3 text-white" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
-            <svg class="bi"><use xlink:href="icons.svg#list"/></svg>
+            <svg class="bi"><use xlink:href="/assets/icons.svg#list"/></svg>
           </button>
         </li>
       </ul>
@@ -104,7 +104,7 @@
                   hx-trigger="load"
                   hx-swap="innerHTML"
                   hx-indicator="#indicator_name_small"
-                  class="offcanvas-title" id="sidebarMenuLabel"><img id="indicator_name_small" class="htmx-indicator" src="/loader.gif" width="32"/></h5>
+                  class="offcanvas-title" id="sidebarMenuLabel"><img id="indicator_name_small" class="htmx-indicator" src="/assets/loader.gif" width="32"/></h5>
               <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#sidebarMenu" aria-label="Close"></button>
             </div>
             <div  id="sidebar" hx-get="/core/get-sidebar.php"
@@ -112,13 +112,13 @@
                   hx-swap="innerHTML"
                   hx-indicator="#indicator_sidebar"
                   class="offcanvas-body d-md-flex flex-column p-0 pt-lg-3 overflow-y-auto">
-                  <img id="indicator_sidebar" class="htmx-indicator" src="/loader.gif" width="32" class="ps-3"/>
+                  <img id="indicator_sidebar" class="htmx-indicator" src="/assets/loader.gif" width="32" class="ps-3"/>
             </div>
           </div>
         </div>
 
         <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-          <img id="indicator_main_window" class="htmx-indicator" src="/loader.gif" width="32" class="ps-3"/>
+          <img id="indicator_main_window" class="htmx-indicator" src="/assets/loader.gif" width="32" class="ps-3"/>
           <div hx-get="/features/dashboard.php"
                hx-trigger="load"
                hx-swap="innerHTML"
@@ -129,10 +129,10 @@
       </div>
     </div>
     <script src="/assets/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="/htmx.min.js"></script>
+    <script src="/assets/dist/js/htmx.min.js"></script>
 
     <!-- Custom icons for this template -->
-    <object type="image/svg+xml" data="icons.svg" class="d-none"></object>
+    <object type="image/svg+xml" data="/assets/icons.svg" class="d-none"></object>
 
   </body>
 </html>
