@@ -1,5 +1,6 @@
 {
     "title": "Макроцикл Солнца",
+    "category": 4,
     "url": "/core/get-cycle.php?name=eleven_year",
     "tooltip": "",
     "trigger": "year_periodic",

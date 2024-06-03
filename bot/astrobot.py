@@ -42,6 +42,7 @@ import pytz
 import math
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
+import random
 
 
 # Настройки бота
@@ -118,6 +119,7 @@ def update_week_activity_data():
     # Сохраняем обновленные данные обратно в файл
     with open(week_activity_file, 'w', encoding='utf-8') as f:
         json.dump(week_activity_data, f, ensure_ascii=False)
+
 
 #
 # Получаем локальное время для пользователя, в его часовом поясе
@@ -208,10 +210,11 @@ def scan_cycles():
 
     return cycles
 
+
 #
 # Проверяет существует ли профиль пользователя,
 # и создаёт если нет. Выполняется по команде /start бота
-async def create_or_load_user_data(user_id, start_param = False):
+async def create_or_load_user_data(user_id, start_param=False):
 
     print('Ищу нового пользователя в базе данных…')
 
@@ -270,11 +273,12 @@ async def create_or_load_user_data(user_id, start_param = False):
             keyboard.add(return_button)
             await bot.send_message(user_id, "❌ Упс! Что-то пошло не так, обратись в поддержку для решения проблемы", reply_markup=keyboard)
 
+
 #
 # Отправляет меню из файла пользователю,
 # menu_id - это название файла с описанием меню,
 # replace_message - если не 0, удаляет сообщение перед отправкой меню
-async def send_menu(user_id, menu_id, replace_message = 0):
+async def send_menu(user_id, menu_id, replace_message=0, option_data=False):
 
     print('Пользователь', user_id, 'запросил меню', menu_id)
 
@@ -296,7 +300,7 @@ async def send_menu(user_id, menu_id, replace_message = 0):
         message = data.get('message', '')
         buttons = data.get('keyboard', [])
 
-
+        # !!! <>#$%
         # Обрабатываем встроенные в сообщения перменные
         if re.search(r'\{.*?\}', message) is not None:
 
@@ -310,12 +314,111 @@ async def send_menu(user_id, menu_id, replace_message = 0):
                 subscription_task = asyncio.ensure_future(get_user_subscription(user['subscription'])) # подменяем идентификатор подписки на название
                 subscription = await subscription_task
                 user['subscription'] = subscription['title']
-                
+
+            elif menu_id == 'cycles':
+                user['user_id'] = user_id
+                user_time = await get_local_time(user['timezone'])  # получает локальное время пользователя
+                # Текущая дата
+                user['date'] = user_time.strftime('%d.%m.%Y')
+                # Планетарный час
+                # Получение ответов для вчера, сегодня и завтра и сохранение их в отдельные переменные
+                planetary_clock_yesterday, planetary_clock_today, planetary_clock_tomorrow = (
+                    await get_sunrise_sunset(user, user_time - timedelta(days=1)),
+                    await get_sunrise_sunset(user, user_time),
+                    await get_sunrise_sunset(user, user_time + timedelta(days=1))
+                )
+                yesterday_sunset = datetime.strptime(planetary_clock_yesterday['results']['sunset'], "%Y-%m-%dT%H:%M:%S%z")
+                sunrise = datetime.strptime(planetary_clock_today['results']['sunrise'], "%Y-%m-%dT%H:%M:%S%z")
+                sunset = datetime.strptime(planetary_clock_today['results']['sunset'], "%Y-%m-%dT%H:%M:%S%z")
+                tomorrow_sunrise = datetime.strptime(planetary_clock_tomorrow['results']['sunrise'], "%Y-%m-%dT%H:%M:%S%z")
+                user['planetary_clock'] = ''
+                if user_time < sunrise or user_time > sunset:
+                    if user_time < sunrise:
+                        duration = sunrise - yesterday_sunset
+                        hour_duration = duration / 12
+                        relevant_time = user_time - yesterday_sunset
+                        current_hour = int(relevant_time / hour_duration)
+                        start = yesterday_sunset + hour_duration * current_hour
+                        end = start + hour_duration
+                    else:
+                        duration: timedelta = tomorrow_sunrise - sunset
+                        hour_duration = duration / 12
+                        relevant_time = user_time - sunset
+                        current_hour = int(relevant_time / hour_duration)
+                        start = sunset + hour_duration * current_hour
+                        end = start + hour_duration
+                    user['planetary_clock'] = f'{current_hour} ({start.hour}:{start.minute} - {end.hour}:{end.minute})'
+                else:
+                    duration: timedelta = sunset - sunrise
+                    hour_duration = duration / 12
+                    relevant_time = user_time - sunrise
+                    current_hour = int(relevant_time / hour_duration)
+                    start = sunrise + hour_duration * current_hour
+                    end = start + hour_duration
+                    user['planetary_clock'] = f'{current_hour} ({start.hour}:{start.minute if start.minute >= 10 else "0" + start.minute.__str__()} - {end.hour}:{end.minute if end.minute >= 10 else "0" + end.minute.__str__()})'
+                # 4х часовки
+                four_hours = await cycle_manager.start(user, 'four_hours')
+                user['four_hours'] = four_hours.splitlines()[0]
+
+            elif menu_id == 'get_active_cycles':
+                user_time = await get_local_time(user['timezone'])  # получает локальное время пользователя
+                # Текущая дата
+                user['date'] = user_time.strftime('%d.%m.%Y')
+
+            elif menu_id == 'get_active_cycles_next_1':
+                user_time = await get_local_time(user['timezone'])  # получает локальное время пользователя
+                # Завтрашняя дата
+                user_time = user_time + timedelta(days=1)
+                user['date_tomorrow'] = user_time.strftime('%d.%m.%Y')
+
+            elif menu_id == 'get_active_cycles_next_30':
+                user_time = await get_local_time(user['timezone'])  # получает локальное время пользователя
+                # Текущая дата
+                user['date'] = user_time.strftime('%d.%m.%Y')
+                user_time = user_time + timedelta(days=30)
+                user['date_next_month'] = user_time.strftime('%d.%m.%Y')
+
+            elif option_data:
+                if menu_id == 'partner_show':
+                    print(f'Совместимость: Загружаю {option_data['title']}')
+                    message = message.format(**option_data)
+            else:
+                print('Не понимаю что загружать…')
+
             message = message.format(**user)
 
+        # !!!2 <>#$%
+        # Обрабатываем разные меню
         if menu_id == 'cycles':
 
-            buttons_task = asyncio.ensure_future(get_cycles())
+            buttons_task = asyncio.ensure_future(get_cycles(1))
+            buttons = await buttons_task + buttons
+
+        elif menu_id == 'cycles_personal' or menu_id == 'partner_show':
+
+            buttons_task = asyncio.ensure_future(get_cycles(2))
+            buttons = await buttons_task + buttons
+            if menu_id == 'partner_show':
+                buttons.append({"text": '⛔️ Удалить', "callback": 'partner_del_0'})
+
+        elif menu_id == 'cycles_investment':
+
+            buttons_task = asyncio.ensure_future(get_cycles(3))
+            buttons = await buttons_task + buttons
+
+        elif menu_id == 'cycles_sun':
+
+            buttons_task = asyncio.ensure_future(get_cycles(4))
+            buttons = await buttons_task + buttons
+
+        elif menu_id == 'cycles_retrogrades':
+
+            buttons_task = asyncio.ensure_future(get_cycles(5))
+            buttons = await buttons_task + buttons
+
+        elif menu_id == 'prognostics':
+
+            buttons_task = asyncio.ensure_future(get_cycles(6))
             buttons = await buttons_task + buttons
 
         elif menu_id == 'my_subscription_info':
@@ -323,7 +426,11 @@ async def send_menu(user_id, menu_id, replace_message = 0):
             buttons_task = asyncio.ensure_future(get_allowed_subscriptions(user['subscription']))
             buttons = await buttons_task + buttons
 
-                
+        elif menu_id == 'compatibility':
+
+            buttons_task = asyncio.ensure_future(get_partner(user_id))
+            buttons = await buttons_task + buttons
+
         row = []  # Список для кнопок в текущем ряду
 
         # Определяем максимальное количество кнопок в ряду в зависимости от количества кнопок
@@ -361,6 +468,7 @@ async def send_menu(user_id, menu_id, replace_message = 0):
         keyboard.add(return_button)
         await bot.send_message(user_id, "❌ Упс! Случилось что-то страшное!\n\nНе переживай, обратись в поддержку для решения проблемы", reply_markup=keyboard)
 
+
 #
 # Проверяет полностью ли заполнен профиль пользователя. (True/False)
 async def is_completed_profile(user):
@@ -373,12 +481,13 @@ async def is_completed_profile(user):
     else:
         return True
 
+
 #
 # Запрашивает данные у пользователя для обновления,
 # user - это объект с профилем пользователя, если он уже был запрошен (для предотвращения двойного чтения файла)
 # field — это параметр профиля пользователя (когда нужно обновить один конкретный параметр профиля)
 # replace_message - если не 0, удаляет сообщение перед отправкой нового
-async def get_update_profile(user_id, user = False, field = False, replace_message = 0):
+async def get_update_profile(user_id, user=False, field=False, replace_message=0):
 
     print(f'Проверяю профиль пользователя {user_id}…')
 
@@ -473,6 +582,7 @@ async def get_update_profile(user_id, user = False, field = False, replace_messa
     else:
         return False
 
+
 #
 # Читает файл профиля пользователя и возвращает объект профиля
 async def get_user_profile(user_id):
@@ -492,6 +602,7 @@ async def get_user_profile(user_id):
         print(f'x Несуществующий профиль для {user_id}')
     
     return False
+
 
 #
 # Читает файл подписки (тарифа) и возвращает объект подписки
@@ -516,6 +627,7 @@ async def get_user_subscription(subscription_file):
     
     return False
 
+
 #
 # Читает файлы подписок (тарифов) и возвращает объект с кнопками
 async def get_allowed_subscriptions(subscription_file):
@@ -539,9 +651,60 @@ async def get_allowed_subscriptions(subscription_file):
 
     return buttons
 
+
+#
+# Читает файлы партнёров (опция Совместимость) и возвращает объект с кнопками
+async def get_partner(user_id, target='hash'):
+    # Модуль Совместимость, получение партнёра(ов)
+    partners_dir = os.path.join(users_dir, f'{user_id}/')
+
+    if not os.path.exists(partners_dir):
+        print(f'Каталог для пользователя {user_id} не найден.')
+        return []
+
+    if target == 'hash':
+        print(f'Получаю информацию о партнёрах (Совместимость), для {user_id}…')
+        partner_files = [f for f in os.listdir(partners_dir) if f.endswith('.json')]
+
+        buttons = []
+        for file_name in partner_files:
+            file_path = os.path.join(partners_dir, file_name)
+            if os.path.exists(file_path):
+                with open(file_path, 'r') as f:
+                    try:
+                        partner_data = json.load(f)
+                        name = partner_data.get('title', 'Unknown')
+                        button_text = f'{name}'
+                        callback_data = f'partner_{file_name[:-5]}'  # Убираем '.json' из имени файла
+                        buttons.append({"text": button_text, "callback": callback_data})
+                    except json.JSONDecodeError:
+                        print(f'Ошибка чтения файла {file_name}')
+            else:
+                print(f'Файл {file_name} не найден.')
+
+        return buttons
+
+    else:
+        print(f'Получаю информацию о партнёре (Совместимость) — {target}, для {user_id}…')
+        file_name = f'{target}.json'
+
+        file_path = os.path.join(partners_dir, file_name)
+        if os.path.exists(file_path):
+            with open(file_path, 'r') as f:
+                try:
+                    partner_data = json.load(f)
+
+                except json.JSONDecodeError:
+                    print(f'Ошибка чтения файла {file_name}')
+        else:
+            print(f'Файл {file_name} не найден.')
+
+        return partner_data
+
+
 #
 # Читает файлы циклов и возвращает объект с кнопками
-async def get_cycles():
+async def get_cycles(category):
     print(f'Получаю информацию о доступных циклах…')
 
     cycle_files = [f for f in os.listdir(cycles_dir) if f.endswith('.json')]
@@ -551,18 +714,22 @@ async def get_cycles():
         with open(os.path.join(cycles_dir, file_name), 'r') as f:
             cycle_data = json.load(f)
             name = cycle_data.get('title', 'Unknown')
+            cycle_category = cycle_data.get('category', 0)
             button_text = f'{name}'
             callback_data = f'cycle_{file_name[:-5]}'  # Убираем '.json' из имени файла
+            if category != cycle_category:
+                continue
             buttons.append({"text": button_text, "callback": callback_data})
 
     return buttons
+
 
 #
 # Запрашивает данные цикла из файла,
 # user - это объект с профилем пользователя, если он уже был запрошен (для предотвращения двойного чтения файла)
 # cycle — это файл цикла (когда нужно выполнить один конкретный цикл)
 # replace_message - если не 0, удаляет сообщение перед отправкой нового
-async def get_data_cycle(user_id, cycle, user = False, replace_message = 0):
+async def get_data_cycle(user_id, cycle, user=False, replace_message=0):
 
     print(f'Читаю файл цикла {cycle} для пользователя {user_id}…')
 
@@ -1087,6 +1254,15 @@ class CycleManager:
             result = {'text': 'Благоприятное время для сделок', 'media_path': media_path}
             return result
 
+        elif cycle['trigger'] == 'random':
+            print('Начинаю выполнение цикла по триггеру random…')
+            random_number = random.randint(0, 64)
+            response_text = "Случайное сообщение " + str(random_number)
+            return response_text
+
+        else:
+            print('Начинаю выполнение цикла по другому триггеру… (example)')
+            return "Сезон\nМесяц\nОрган\nМеридиан\nФокус внимания"
 #
 # Для работы с файлом профиля и валидации входных данных
 class ProfileEditor:
@@ -1228,9 +1404,6 @@ class ProfileEditor:
                 return "Нет ожидаемого параметра для ввода."
 
 
-# Замените 'YOUR_TOKEN' на токен вашего бота
-#TOKEN = '5928227545:AAFbZsffR50yiJwtu2koZKHzE2zsEZJ0q80'
-
 try:
     # Открываем файл для чтения
     with open('token', 'r') as file:
@@ -1362,7 +1535,7 @@ async def handle_callback_query(call):
         param_name = call.data[len("cycle_"):]
 
         # Вызов функции some_func с параметром param_name
-        system_message_ids[user_id] = await get_data_cycle(user_id, cycle = param_name, replace_message = message_id)
+        system_message_ids[user_id] = await get_data_cycle(user_id, cycle=param_name, replace_message=message_id)
         await bot.answer_callback_query(call.id)
 
     #
@@ -1390,6 +1563,9 @@ async def handle_callback_query(call):
     # Кнопки для главного меню:
     # Циклы, Настройки и пр.
     #
+    elif call.data == 'compatibility':
+        await send_menu(user_id, 'compatibility', message_id)
+        await bot.answer_callback_query(call.id)
     elif call.data == 'cycles':
         await send_menu(user_id, 'cycles', message_id)
         await bot.answer_callback_query(call.id)
@@ -1408,7 +1584,66 @@ async def handle_callback_query(call):
     elif call.data == 'referal_get_link':
         await send_menu(user_id, 'referal_get_link', message_id)
         await bot.answer_callback_query(call.id)
+    elif call.data == 'prognostics':
+        await send_menu(user_id, 'prognostics', message_id)
+        await bot.answer_callback_query(call.id)
 
+    #
+    # Кнопки управления партнёрами в сервисе совместимости
+    #
+    elif call.data == 'partner_add':
+        await send_menu(user_id, 'partner_add', message_id)
+        await bot.answer_callback_query(call.id)
+    # Проверка, начинается ли текст кнопки с "partner_"
+    elif call.data.startswith("partner_"):
+        # Извлечение значения после "partner_"
+        param_name = call.data[len("partner_"):]
+        option_data = await get_partner(user_id, target=param_name)
+
+        # Вызов функции some_func с параметром param_name
+        await send_menu(user_id, 'partner_show', message_id, option_data)
+        await bot.answer_callback_query(call.id)
+
+    #
+    # Кнопки для категорий циклов
+    # Личные, Сегодня, Будущее и др.
+    #
+    elif call.data == 'cycles_personal':
+        await send_menu(user_id, 'cycles_personal', message_id)
+        await bot.answer_callback_query(call.id)
+    elif call.data == 'cycles_investment':
+        await send_menu(user_id, 'cycles_investment', message_id)
+        await bot.answer_callback_query(call.id)
+    elif call.data == 'cycles_sun':
+        await send_menu(user_id, 'cycles_sun', message_id)
+        await bot.answer_callback_query(call.id)
+    elif call.data == 'cycles_retrogrades':
+        await send_menu(user_id, 'cycles_retrogrades', message_id)
+        await bot.answer_callback_query(call.id)
+
+    #
+    # Кнопка получения информации о сегодняшних циклах (на которые подписан пользователь)
+    #
+    elif call.data == 'get_active_cycles':
+        await send_menu(user_id, 'get_active_cycles', message_id)
+        await bot.answer_callback_query(call.id)
+
+    #
+    # Кнопки получения информации о циклах из будущего (на которые подписан пользователь)
+    # Завтра, На месяц, Планетарные циклы (до 100 лет)
+    #
+    elif call.data == 'get_active_cycles_next':
+        await send_menu(user_id, 'get_active_cycles_next', message_id)
+        await bot.answer_callback_query(call.id)
+    elif call.data == 'get_active_cycles_next_1':
+        await send_menu(user_id, 'get_active_cycles_next_1', message_id)
+        await bot.answer_callback_query(call.id)
+    elif call.data == 'get_active_cycles_next_30':
+        await send_menu(user_id, 'get_active_cycles_next_30', message_id)
+        await bot.answer_callback_query(call.id)
+    elif call.data == 'get_active_cycles_next_100':
+        await send_menu(user_id, 'get_active_cycles_next_100', message_id)
+        await bot.answer_callback_query(call.id)
 
     #
     # Кнопка получения информации о текущей подписке пользователя
@@ -1416,7 +1651,6 @@ async def handle_callback_query(call):
     elif call.data == 'my_subscription_info':
         await send_menu(user_id, 'my_subscription_info', message_id)
         await bot.answer_callback_query(call.id)
-
 
     #
     # Кнопки для настроек:
@@ -1428,10 +1662,9 @@ async def handle_callback_query(call):
         param_name = call.data[len("set_"):]
 
         # Вызов функции some_func с параметром param_name
-        message = await get_update_profile(user_id, field = param_name, replace_message = message_id)
+        message = await get_update_profile(user_id, field=param_name, replace_message=message_id)
         system_message_ids[user_id] = message
         await bot.answer_callback_query(call.id)
-
 
     #
     # Кнопки подписаться на цикл
@@ -1443,8 +1676,8 @@ async def handle_callback_query(call):
 
         await bot.answer_callback_query(call.id, text=f"✅ Ты успешно подписался на обновления {param_name}")
 
-        await get_update_profile(user_id, field = f'cycle_{param_name}')
-        await get_data_cycle(user_id, cycle = param_name, replace_message = message_id)
+        await get_update_profile(user_id, field=f'cycle_{param_name}')
+        await get_data_cycle(user_id, cycle=param_name, replace_message=message_id)
 
         # Вызов функции some_func с параметром param_name
         print(f'Пользователь {user_id} подписался на обновления {param_name}')
@@ -1459,12 +1692,11 @@ async def handle_callback_query(call):
 
         await bot.answer_callback_query(call.id, text=f"⛔️ Ты успешно отписался от обновлений {param_name}")
 
-        await get_update_profile(user_id, field = f'cycle_{param_name}')
+        await get_update_profile(user_id, field=f'cycle_{param_name}')
         await get_data_cycle(user_id, cycle = param_name, replace_message = message_id)
 
         # Вызов функции some_func с параметром param_name
         print(f'Пользователь {user_id} отписался от обновлений {param_name}')
-
 
     update_week_activity_data()
     print(f"Пользователь {user_id} нажал на кнопку: {call.data}")

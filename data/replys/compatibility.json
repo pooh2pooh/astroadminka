@@ -1,0 +1,15 @@
+{
+    "title": "Совместимость",
+    "url": "/core/get-reply.php?name=compatibility",
+    "message": "Проверь свою совместимость с деловыми (или нет) партнёрами",
+    "keyboard": [
+        {
+            "text": "Добавить",
+            "callback": "partner_add"
+        },
+        {
+            "text": "Главное меню",
+            "callback": "main_menu"
+        }
+    ]
+}

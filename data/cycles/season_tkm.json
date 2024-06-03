@@ -1,0 +1,7 @@
+{
+    "title": "Сезон по ТКМ",
+    "category": 1,
+    "url": "/core/get-cycle.php?name=season_tkm",
+    "tooltip": "",
+    "trigger": "example"
+}

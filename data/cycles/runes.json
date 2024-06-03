@@ -1,0 +1,7 @@
+{
+    "title": "Руны",
+    "category": 6,
+    "url": "/core/get-cycle.php?name=runes",
+    "tooltip": "",
+    "trigger": "random"
+}

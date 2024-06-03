@@ -1,0 +1,11 @@
+{
+    "title": "Завтра",
+    "url": "/core/get-reply.php?name=get_active_cycles_next_1",
+    "message": "{date_tomorrow}\n\nЗдесь перечислены все твои циклы на завтра:\nНет данных, скорее всего ты не подписан на циклы",
+    "keyboard": [
+        {
+            "text": "Главное меню",
+            "callback": "main_menu"
+        }
+    ]
+}

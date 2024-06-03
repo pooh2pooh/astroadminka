@@ -39,7 +39,7 @@ if (isset($_GET['name']) && !empty($_GET['name'])) {
             // Добавляем кнопку для добавления нового поля
             echo '<button type="button" onclick="addNewField()" class="btn btn-dark bg-gradient my-2">Добавить новое поле</button><br>';
             // Добавляем скрытое поле с именем файла
-            echo '<input type="hidden" name="filename" value="' . htmlspecialchars($_GET['name']) . '" class="form-control">';
+            echo '<input type="hidden" name="filename" value="data/cycles/' . htmlspecialchars($_GET['name']) . '.json" class="form-control">';
             // Добавляем кнопку для отправки формы
             echo '<input type="submit" value="Сохранить" class="btn btn-success bg-gradient">';
             echo '</form>';

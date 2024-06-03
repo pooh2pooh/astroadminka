@@ -1,8 +1,32 @@
 {
     "title": "Циклы",
     "url": "/core/get-reply.php?name=cycles",
-    "message": "Все циклы:",
+    "message": "Сегодня {date}\nПланетарный час {planetary_clock}\nЛунные сутки —\nФаза луны —\n4х часовка {four_hours}\nПита —\nДоша —",
     "keyboard": [
+        {
+            "text": "Личные",
+            "callback": "cycles_personal"
+        },
+        {
+            "text": "Будущее",
+            "callback": "get_active_cycles_next"
+        },
+        {
+            "text": "Сегодня",
+            "callback": "get_active_cycles"
+        },
+        {
+            "text": "Инвестиции",
+            "callback": "cycles_investment"
+        },
+        {
+            "text": "Солнечные",
+            "callback": "cycles_sun"
+        },
+        {
+            "text": "Ретрограды",
+            "callback": "cycles_retrogrades"
+        },
         {
             "text": "Главное меню",
             "callback": "main_menu"

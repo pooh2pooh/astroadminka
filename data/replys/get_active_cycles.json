@@ -1,0 +1,11 @@
+{
+    "title": "Сегодня",
+    "url": "/core/get-reply.php?name=get_active_cycles",
+    "message": "{date}\n\nЗдесь перечислены все твои циклы на сегодня:\nНет данных",
+    "keyboard": [
+        {
+            "text": "Главное меню",
+            "callback": "main_menu"
+        }
+    ]
+}

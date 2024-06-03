@@ -1,0 +1,11 @@
+{
+    "title": "Прогностика",
+    "url": "/core/get-reply.php?name=prognostics",
+    "message": "Прогностика:",
+    "keyboard": [
+        {
+            "text": "Главное меню",
+            "callback": "main_menu"
+        }
+    ]
+}

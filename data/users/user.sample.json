@@ -1,1 +1,13 @@
-{"full_name": "Иван Иванович (тестовый)", "birth_day": "10.10.2004", "birth_time": "10:10", "timezone": "GMT+3", "latitude": 50.623527, "longitude": 36.586017, "birth_place": "Belgorod", "referals": [], "subscription": "vip", "cycles": []}
+{
+  "birth_day": "10.10.2004",
+  "birth_place": "Belgorod",
+  "birth_time": "10:10",
+  "cycles": [],
+  "full_name": "Иван Иванович (тестовый)",
+  "latitude": 50.623527,
+  "longitude": 36.586017,
+  "partners": 0,
+  "referals": [],
+  "subscription": "vip",
+  "timezone": "GMT+3"
+}

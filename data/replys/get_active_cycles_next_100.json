@@ -1,0 +1,11 @@
+{
+    "title": "Планетарные циклы",
+    "url": "/core/get-reply.php?name=get_active_cycles_next_100",
+    "message": "Здесь перечислены все планетарные циклы до 100 лет:\nНет данных, скорее всего ты не подписан на циклы",
+    "keyboard": [
+        {
+            "text": "Главное меню",
+            "callback": "main_menu"
+        }
+    ]
+}

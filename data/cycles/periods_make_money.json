@@ -1,5 +1,6 @@
 {
     "title": "Благоприятное время для сделок",
+    "category": 3,
     "url": "/core/get-cycle.php?name=periods_make_money",
     "tooltip": "",
     "trigger": "periods_make_money"

@@ -1,0 +1,11 @@
+{
+    "title": "Личные циклы",
+    "url": "/core/get-reply.php?name=cycles_personal",
+    "message": "Личные циклы:",
+    "keyboard": [
+        {
+            "text": "Главное меню",
+            "callback": "main_menu"
+        }
+    ]
+}
