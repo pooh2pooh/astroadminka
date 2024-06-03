@@ -1,0 +1,11 @@
+{
+    "title": "Добавить партнёра",
+    "url": "/core/get-reply.php?name=add_partner",
+    "message": "Улучши свою подписку чтобы воспользоваться сервисом проверки совместимости",
+    "keyboard": [
+        {
+            "text": "Главное меню",
+            "callback": "main_menu"
+        }
+    ]
+}
