@@ -1,5 +1,6 @@
 {
     "title": "Биоритмы человека",
+    "category": 2,
     "url": "/core/get-cycle.php?name=live_biorythms",
     "tooltip": "",
     "trigger": "live_biorythms"

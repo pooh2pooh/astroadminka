@@ -1,5 +1,6 @@
 {
     "title": "Планетарные часы",
+    "category": 1,
     "url": "/core/get-cycle.php?name=planetary_clock",
     "tooltip": "",
     "trigger": "sunrise_sunset",

@@ -1,5 +1,6 @@
 {
     "title": "Дни недели/Сутки",
+    "category": 2,
     "url": "/core/get-cycle.php?name=week_day",
     "tooltip": "",
     "trigger": "week_day",

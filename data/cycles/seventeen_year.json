@@ -1,5 +1,6 @@
 {
     "title": "Макроцикл Меркурия",
+    "category": 1,
     "url": "/core/get-cycle.php?name=seventeen_year",
     "tooltip": "",
     "trigger": "year_periodic",

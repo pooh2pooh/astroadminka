@@ -1,5 +1,6 @@
 {
     "title": "Макроцикл Марса",
+    "category": 4,
     "url": "/core/get-cycle.php?name=fifteen_year",
     "tooltip": "",
     "trigger": "year_periodic",

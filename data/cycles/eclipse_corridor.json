@@ -1,5 +1,6 @@
 {
     "title": "Коридор затмений",
+    "category": 4,
     "url": "/core/get-cycle.php?name=eclipse_corridor",
     "tooltip": "",
     "trigger": "exact_day",

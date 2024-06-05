@@ -1,6 +1,6 @@
 {
     "title": "Цикл крови по Луне",
-    "category": "2",
+    "category": 2,
     "url": "/core/get-cycle.php?name=blood_moon",
     "tooltip": "",
     "trigger": "blood_moon"

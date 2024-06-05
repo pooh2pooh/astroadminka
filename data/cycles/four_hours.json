@@ -1,5 +1,6 @@
 {
     "title": "Четырехчасовки",
+    "category": 2,
     "url": "/core/get-cycle.php?name=four_hours",
     "tooltip": "",
     "trigger": "time",
