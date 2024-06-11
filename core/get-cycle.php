@@ -1,5 +1,28 @@
 <?php
 
+$cycles_dir = '../data/cycles';
+$files = scandir($cycles_dir);
+$categories = [];
+
+// Здесь парсятся все доступные категории,
+// и хранятся в $categories
+foreach ($files as $file) {
+    if (pathinfo($file, PATHINFO_EXTENSION) === 'json') {
+        $json_data = file_get_contents($cycles_dir . '/' . $file);
+        $cycle = json_decode($json_data, true);
+
+        if ($cycle !== null) {
+            $category = isset($cycle['category']) ? $cycle['category'] : 'Uncategorized';
+            if (!in_array($category, $categories)) {
+                $categories[] = $category;
+            }
+        } else {
+            echo '<span class="text-danger small">Ошибка при декодировании JSON файла: ' . $file . '</span>';
+        }
+    }
+}
+
+
 // Проверяем, было ли передано имя файла в параметре GET запроса
 if (isset($_GET['name']) && !empty($_GET['name'])) {
     // Собираем путь к файлу JSON
@@ -21,8 +44,12 @@ if (isset($_GET['name']) && !empty($_GET['name'])) {
                 if ($key === "url") {
                     continue; // Пропускаем поле для URL
                 }
+                if ($key === "trigger") {
+                    $trigger = $value;
+                }
 
-                // Проверяем, является ли значение массивом (объектом JSON)
+                // Проверяем, является ли значение массивом (объектом JSON),
+                // тогда реализуем сложную логику обработки таких объектов
                 if (is_array($value)) {
                     echo '<h3 class="text-center">' . htmlspecialchars($key) . '</h3>'; // Заголовок для объекта JSON
                     foreach ($value as $subkey => $subvalue) {
@@ -30,14 +57,76 @@ if (isset($_GET['name']) && !empty($_GET['name'])) {
                         echo '<label for="' . htmlspecialchars($key . '_' . $subkey) . '">' . htmlspecialchars($subkey) . ':</label>';
                         echo '<input type="text" id="' . htmlspecialchars($key . '_' . $subkey) . '" name="' . htmlspecialchars($key . '_' . $subkey) . '" value="' . htmlspecialchars($subvalue) . '" class="form-control"><br>';
                     }
-                } else {
-                    // Выводим поля ввода для обычных значений
+                } else if (preg_match("/^\d{1,2}\/\d{2}\/\d{4}$/", $key)) {
+                    // Строка соответствует маске даты "дд/мм/гггг"
+                    $dates[$key] = $value;
+                } else if ($key == 'category') {
+                    //
                     echo '<label for="' . htmlspecialchars($key) . '">' . htmlspecialchars($key) . ':</label>';
+                    echo '<select id="' . htmlspecialchars($key) . '" name="' . htmlspecialchars($key) . '" class="form-control">';
+                    foreach ($categories as $category) {
+                        $selected = ($category == $value) ? 'selected' : '';
+                        echo '<option value="' . htmlspecialchars($category) . '" ' . $selected . '>' . htmlspecialchars($category) . '</option>';
+                    }
+                    echo '</select><br>';
+                } else {
+                    // Иначе выводим поля ввода для обычных значений,
+                    // простые инпуты с заголовками
+                    if ($key == "title") {
+                        $name = '<strong>Заголовок:</strong><br><small class="text-muted">&nbsp;отображается везде</small>';
+                    }
+                    echo '<label for="' . htmlspecialchars($key) . '">' . (isset($name) && $name !== null ? $name : htmlspecialchars($key)) . '</label>';
+                    $name = null;
                     echo '<input type="text" id="' . htmlspecialchars($key) . '" name="' . htmlspecialchars($key) . '" value="' . htmlspecialchars($value) . '" class="form-control"><br>';
                 }
             }
-            // Добавляем кнопку для добавления нового поля
-            echo '<button type="button" onclick="addNewField()" class="btn btn-dark bg-gradient my-2">Добавить новое поле</button><br>';
+
+            // Обрабатываем список дат для цикла,
+            // здесь же скрываем историю дат, всегда показываем 3 самые актуальные
+            if (isset($dates) && is_array($dates)) {
+                $counter = 0; // Счетчик выводимых инпутов
+                $hiddenInputs = []; // Массив для хранения скрытых инпутов
+                foreach (array_reverse($dates) as $key => $value) {
+                    if ($counter < 3) { // Проверяем, не превышен ли лимит вывода
+                        echo '<label for="' . htmlspecialchars($key) . '">' . htmlspecialchars($key) . ':</label>';
+                        echo '<input type="text" id="' . htmlspecialchars($key) . '" name="' . htmlspecialchars($key) . '" value="' . htmlspecialchars($value) . '" class="form-control"><br>';
+                        $counter++;
+                    } else { // Если превышен, добавляем инпуты в массив для скрытия
+                        $hiddenInputs[$key] = $value;
+                    }
+                }
+
+                // Если есть скрытые инпуты, выводим кнопку для их отображения
+                if (!empty($hiddenInputs)) {
+                    echo '<div class="accordion" id="collapseMenu">';
+                    echo '<div class="accordion-item">';
+                    echo '<h2 class="accordion-header" id="headingCollapse">';
+                    echo '<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseHidden" aria-expanded="false" aria-controls="collapseHidden">';
+                    echo 'Показать все поля';
+                    echo '</button>';
+                    echo '</h2>';
+                    echo '<div id="collapseHidden" class="accordion-collapse collapse" aria-labelledby="headingCollapse" data-bs-parent="#collapseMenu">';
+                    echo '<div class="accordion-body">';
+
+                    // Выводим скрытые инпуты
+                    foreach ($hiddenInputs as $key => $value) {
+                        echo '<label for="' . htmlspecialchars($key) . '">' . htmlspecialchars($key) . ':</label>';
+                        echo '<input type="text" id="' . htmlspecialchars($key) . '" name="' . htmlspecialchars($key) . '" value="' . htmlspecialchars($value) . '" class="form-control"><br>';
+                    }
+
+                    echo '</div>';
+                    echo '</div>';
+                    echo '</div>';
+                    echo '</div>';
+                }
+            }
+
+            // Добавляем кнопку для добавления нового поля,
+            // здесь можно указать несколько триггеров,
+            // для которых будет выводится кнопка "Добавить новое поле"
+            if (isset($trigger) && $trigger == 'exact_day') {
+                echo '<button type="button" onclick="addNewField()" class="btn btn-dark bg-gradient my-2">Добавить новое поле</button><br>';
+            }
             // Добавляем скрытое поле с именем файла
             echo '<input type="hidden" name="filename" value="data/cycles/' . htmlspecialchars($_GET['name']) . '.json" class="form-control">';
             // Добавляем кнопку для отправки формы

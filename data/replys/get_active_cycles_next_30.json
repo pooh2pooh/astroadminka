@@ -1,11 +1,16 @@
 {
     "title": "На месяц",
+    "category": "Циклы",
     "url": "/core/get-reply.php?name=get_active_cycles_next_30",
     "message": "{date} - {date_next_month}\n\nЗдесь перечислены все твои циклы на месяц:\nНет данных, скорее всего ты не подписан на циклы",
     "keyboard": [
         {
             "text": "Главное меню",
             "callback": "main_menu"
+        },
+        {
+            "text": "Назад",
+            "callback": "cycles"
         }
     ]
 }

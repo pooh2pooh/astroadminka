@@ -1,11 +1,16 @@
 {
     "title": "Личные циклы",
+    "category": "Циклы",
     "url": "/core/get-reply.php?name=cycles_personal",
     "message": "Личные циклы:",
     "keyboard": [
         {
             "text": "Главное меню",
             "callback": "main_menu"
+        },
+        {
+            "text": "Назад",
+            "callback": "cycles"
         }
     ]
 }

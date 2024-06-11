@@ -1,7 +1,8 @@
 {
     "title": "Циклы",
+    "category": "Главное меню",
     "url": "/core/get-reply.php?name=cycles",
-    "message": "Сегодня {date}\nПланетарный час {planetary_clock}\nЛунные сутки —\nФаза луны —\n4х часовка {four_hours}\nПита —\nДоша —",
+    "message": "Список циклов:",
     "keyboard": [
         {
             "text": "Личные",

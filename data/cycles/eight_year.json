@@ -1,6 +1,6 @@
 {
     "title": "Макроцикл Венеры",
-    "category": 4,
+    "category": "Солнечные",
     "url": "/core/get-cycle.php?name=eight_year",
     "tooltip": "",
     "trigger": "year_periodic",

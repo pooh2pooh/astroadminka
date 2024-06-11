@@ -1,11 +1,16 @@
 {
     "title": "Инвестиционные циклы",
+    "category": "Циклы",
     "url": "/core/get-reply.php?name=cycles_investment",
     "message": "Инвестиционные циклы:",
     "keyboard": [
         {
             "text": "Главное меню",
             "callback": "main_menu"
+        },
+        {
+            "text": "Назад",
+            "callback": "cycles"
         }
     ]
 }

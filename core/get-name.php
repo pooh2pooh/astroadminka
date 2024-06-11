@@ -1,3 +1,3 @@
 <?php
 
-	echo 'Astro&nbsp;bot&nbsp;<strong>2.0</strong>';
+	echo 'Astro&nbsp;bot&nbsp;<strong>2.1</strong>';

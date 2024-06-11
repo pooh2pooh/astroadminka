@@ -1,11 +1,16 @@
 {
     "title": "Ретрограды",
+    "category": "Циклы",
     "url": "/core/get-reply.php?name=cycles_retrogrades",
     "message": "Ретрограды:",
     "keyboard": [
         {
             "text": "Главное меню",
             "callback": "main_menu"
+        },
+        {
+            "text": "Назад",
+            "callback": "cycles"
         }
     ]
 }

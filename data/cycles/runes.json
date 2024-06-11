@@ -1,6 +1,6 @@
 {
     "title": "Руны",
-    "category": 6,
+    "category": "Прогностика",
     "url": "/core/get-cycle.php?name=runes",
     "tooltip": "",
     "trigger": "random"

@@ -1,5 +1,6 @@
 {
     "title": "Будущее",
+    "category": "Циклы",
     "url": "/core/get-reply.php?name=get_active_cycles_next",
     "message": "Здесь можно заглянуть в будущее:",
     "keyboard": [
@@ -18,6 +19,10 @@
         {
             "text": "Главное меню",
             "callback": "main_menu"
+        },
+        {
+            "text": "Назад",
+            "callback": "cycles"
         }
     ]
 }

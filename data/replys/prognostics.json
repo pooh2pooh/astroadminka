@@ -1,11 +1,16 @@
 {
     "title": "Прогностика",
+    "category": "Главное меню",
     "url": "/core/get-reply.php?name=prognostics",
     "message": "Прогностика:",
     "keyboard": [
         {
             "text": "Главное меню",
             "callback": "main_menu"
+        },
+        {
+            "text": "Назад",
+            "callback": "cycles"
         }
     ]
 }

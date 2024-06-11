@@ -1,6 +1,6 @@
 {
     "title": "Ретроградный Меркурий",
-    "category": 5,
+    "category": "Ретрограды",
     "url": "/core/get-cycle.php?name=retrograde_mercury",
     "tooltip": "",
     "trigger": "exact_day",

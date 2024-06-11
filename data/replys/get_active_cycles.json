@@ -1,11 +1,16 @@
 {
     "title": "Сегодня",
+    "category": "Циклы",
     "url": "/core/get-reply.php?name=get_active_cycles",
-    "message": "{date}\n\nЗдесь перечислены все твои циклы на сегодня:\nНет данных",
+    "message": "Сегодня {date}\n\nЗдесь перечислены все твои циклы на сегодня:\n\nПланетарный час {planetary_clock}\nЛунные сутки —\nФаза луны —\n4х часовка {four_hours}\nПита —\nДоша —",
     "keyboard": [
         {
             "text": "Главное меню",
             "callback": "main_menu"
+        },
+        {
+            "text": "Назад",
+            "callback": "cycles"
         }
     ]
 }

@@ -1,6 +1,6 @@
 {
     "title": "Дни Экадаши",
-    "category": 1,
+    "category": "Основные",
     "url": "/core/get-cycle.php?name=ekadashi",
     "tooltip": "",
     "trigger": "exact_day",

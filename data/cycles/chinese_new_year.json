@@ -1,6 +1,6 @@
 {
     "title": "Китайский Новый Год",
-    "category": 4,
+    "category": "Солнечные",
     "url": "/core/get-cycle.php?name=chinese_new_year",
     "tooltip": "",
     "trigger": "exact_day",

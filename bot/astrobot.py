@@ -315,7 +315,7 @@ async def send_menu(user_id, menu_id, replace_message=0, option_data=False):
                 subscription = await subscription_task
                 user['subscription'] = subscription['title']
 
-            elif menu_id == 'cycles':
+            elif menu_id == 'get_active_cycles':
                 user['user_id'] = user_id
                 user_time = await get_local_time(user['timezone'])  # получает локальное время пользователя
                 # Текущая дата
@@ -327,10 +327,12 @@ async def send_menu(user_id, menu_id, replace_message=0, option_data=False):
                     await get_sunrise_sunset(user, user_time),
                     await get_sunrise_sunset(user, user_time + timedelta(days=1))
                 )
-                yesterday_sunset = datetime.strptime(planetary_clock_yesterday['results']['sunset'], "%Y-%m-%dT%H:%M:%S%z")
+                yesterday_sunset = datetime.strptime(planetary_clock_yesterday['results']['sunset'],
+                                                     "%Y-%m-%dT%H:%M:%S%z")
                 sunrise = datetime.strptime(planetary_clock_today['results']['sunrise'], "%Y-%m-%dT%H:%M:%S%z")
                 sunset = datetime.strptime(planetary_clock_today['results']['sunset'], "%Y-%m-%dT%H:%M:%S%z")
-                tomorrow_sunrise = datetime.strptime(planetary_clock_tomorrow['results']['sunrise'], "%Y-%m-%dT%H:%M:%S%z")
+                tomorrow_sunrise = datetime.strptime(planetary_clock_tomorrow['results']['sunrise'],
+                                                     "%Y-%m-%dT%H:%M:%S%z")
                 user['planetary_clock'] = ''
                 if user_time < sunrise or user_time > sunset:
                     if user_time < sunrise:
@@ -355,15 +357,11 @@ async def send_menu(user_id, menu_id, replace_message=0, option_data=False):
                     current_hour = int(relevant_time / hour_duration)
                     start = sunrise + hour_duration * current_hour
                     end = start + hour_duration
-                    user['planetary_clock'] = f'{current_hour} ({start.hour}:{start.minute if start.minute >= 10 else "0" + start.minute.__str__()} - {end.hour}:{end.minute if end.minute >= 10 else "0" + end.minute.__str__()})'
+                    user[
+                        'planetary_clock'] = f'{current_hour} ({start.hour}:{start.minute if start.minute >= 10 else "0" + start.minute.__str__()} - {end.hour}:{end.minute if end.minute >= 10 else "0" + end.minute.__str__()})'
                 # 4х часовки
                 four_hours = await cycle_manager.start(user, 'four_hours')
                 user['four_hours'] = four_hours.splitlines()[0]
-
-            elif menu_id == 'get_active_cycles':
-                user_time = await get_local_time(user['timezone'])  # получает локальное время пользователя
-                # Текущая дата
-                user['date'] = user_time.strftime('%d.%m.%Y')
 
             elif menu_id == 'get_active_cycles_next_1':
                 user_time = await get_local_time(user['timezone'])  # получает локальное время пользователя
@@ -382,6 +380,7 @@ async def send_menu(user_id, menu_id, replace_message=0, option_data=False):
                 if menu_id == 'partner_show':
                     print(f'Совместимость: Загружаю {option_data['title']}')
                     message = message.format(**option_data)
+
             else:
                 print('Не понимаю что загружать…')
 
@@ -391,34 +390,34 @@ async def send_menu(user_id, menu_id, replace_message=0, option_data=False):
         # Обрабатываем разные меню
         if menu_id == 'cycles':
 
-            buttons_task = asyncio.ensure_future(get_cycles(1))
+            buttons_task = asyncio.ensure_future(get_cycles('Основные'))
             buttons = await buttons_task + buttons
 
         elif menu_id == 'cycles_personal' or menu_id == 'partner_show':
 
-            buttons_task = asyncio.ensure_future(get_cycles(2))
+            buttons_task = asyncio.ensure_future(get_cycles('Личные'))
             buttons = await buttons_task + buttons
             if menu_id == 'partner_show':
                 buttons.append({"text": '⛔️ Удалить', "callback": 'partner_del_0'})
 
         elif menu_id == 'cycles_investment':
 
-            buttons_task = asyncio.ensure_future(get_cycles(3))
+            buttons_task = asyncio.ensure_future(get_cycles('Инвестиционные'))
             buttons = await buttons_task + buttons
 
         elif menu_id == 'cycles_sun':
 
-            buttons_task = asyncio.ensure_future(get_cycles(4))
+            buttons_task = asyncio.ensure_future(get_cycles('Солнечные'))
             buttons = await buttons_task + buttons
 
         elif menu_id == 'cycles_retrogrades':
 
-            buttons_task = asyncio.ensure_future(get_cycles(5))
+            buttons_task = asyncio.ensure_future(get_cycles('Ретрограды'))
             buttons = await buttons_task + buttons
 
         elif menu_id == 'prognostics':
 
-            buttons_task = asyncio.ensure_future(get_cycles(6))
+            buttons_task = asyncio.ensure_future(get_cycles('Прогностика'))
             buttons = await buttons_task + buttons
 
         elif menu_id == 'my_subscription_info':
@@ -714,7 +713,7 @@ async def get_cycles(category):
         with open(os.path.join(cycles_dir, file_name), 'r') as f:
             cycle_data = json.load(f)
             name = cycle_data.get('title', 'Unknown')
-            cycle_category = cycle_data.get('category', 0)
+            cycle_category = cycle_data.get('category', 'Uncategorized')
             button_text = f'{name}'
             callback_data = f'cycle_{file_name[:-5]}'  # Убираем '.json' из имени файла
             if category != cycle_category:

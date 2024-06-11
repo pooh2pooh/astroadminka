@@ -1,5 +1,6 @@
 {
     "title": "Просмотр партнера",
+    "category": "Совместимость",
     "url": "/core/get-reply.php?name=partner-show",
     "message": "Досье {title}:\n\nПол: {sex}\nДата рождения: {birth_day}",
     "keyboard": [

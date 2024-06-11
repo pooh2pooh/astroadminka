@@ -1,5 +1,6 @@
 {
     "title": "Подписка",
+    "category": "Настройки",
     "url": "/core/get-reply.php?name=subscription",
     "message": "В данном разделе вы можете расширить функционал нашего сервиса или отменить подписку на бота\n\nВаш текущий тариф: {subscription}",
     "keyboard": [

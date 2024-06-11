@@ -1,5 +1,6 @@
 {
     "title": "Список доступных подписок",
+    "category": "Настройки",
     "url": "/core/get-reply.php?name=my_subscription_info",
     "message": "Тебе доступны следующие подписки:",
     "keyboard": [

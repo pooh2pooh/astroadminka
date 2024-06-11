@@ -1,6 +1,6 @@
 {
     "title": "Сезон по китайской медицине",
-    "category": 1,
+    "category": "Основные",
     "url": "/core/get-cycle.php?name=chinese_medicine_season",
     "tooltip": "",
     "trigger": "date",
