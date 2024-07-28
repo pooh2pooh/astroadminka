@@ -1,5 +1,28 @@
 <?php
 
+$replys_dir = '../data/replys';
+$files = scandir($replys_dir);
+$categories = [];
+
+// Здесь парсятся все доступные категории,
+// и хранятся в $categories
+foreach ($files as $file) {
+    if (pathinfo($file, PATHINFO_EXTENSION) === 'json') {
+        $json_data = file_get_contents($replys_dir . '/' . $file);
+        $reply = json_decode($json_data, true);
+
+        if ($reply !== null) {
+            $category = isset($reply['category']) ? $reply['category'] : 'Uncategorized';
+            if (!in_array($category, $categories)) {
+                $categories[] = $category;
+            }
+        } else {
+            echo '<span class="text-danger small">Ошибка при декодировании JSON файла: ' . $file . '</span>';
+        }
+    }
+}
+
+
 // Проверяем, было ли передано имя файла в параметре GET запроса
 if (isset($_GET['name']) && !empty($_GET['name'])) {
     // Собираем путь к файлу JSON
@@ -40,9 +63,28 @@ if (isset($_GET['name']) && !empty($_GET['name'])) {
                         }
                         echo '</div>';
                     }
+                } else if ($key == 'category') {
+                    //
+                    if ($key == "category") {
+                        $name = '<strong>Категория:</strong><br><small class="text-muted">&nbsp;к какой категории относится сообщение</small>';
+                    }
+                    echo '<label for="' . htmlspecialchars($key) . '">' . (isset($name) && $name !== null ? $name : htmlspecialchars($key)) . '</label>';
+                    $name = null;
+                    echo '<select id="' . htmlspecialchars($key) . '" name="' . htmlspecialchars($key) . '" class="form-control">';
+                    foreach ($categories as $category) {
+                        $selected = ($category == $value) ? 'selected' : '';
+                        echo '<option value="' . htmlspecialchars($category) . '" ' . $selected . '>' . htmlspecialchars($category) . '</option>';
+                    }
+                    echo '</select><br>';
                 } else {
+                    if ($key == "title") {
+                        $name = '<strong>Заголовок:</strong><br><small class="text-muted">&nbsp;отображается везде</small>';
+                    }
+                    if ($key == "message") {
+                        $name = '<strong>Сообщение:</strong><br><small class="text-muted">&nbsp;сообщение которое отправляет бот</small>';
+                    }
                     // Выводим поля ввода для обычных значений
-                    echo '<label for="' . htmlspecialchars($key) . '">' . htmlspecialchars($key) . ':</label>';
+                    echo '<label for="' . htmlspecialchars($key) . '">' . (isset($name) && $name !== null ? $name : htmlspecialchars($key)) . '</label>';
                     echo '<input type="text" id="' . htmlspecialchars($key) . '" name="' . htmlspecialchars($key) . '" value="' . $value . '" class="form-control"><br>';
                 }
             }

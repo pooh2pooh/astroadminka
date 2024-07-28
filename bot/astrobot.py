@@ -11,7 +11,7 @@
 # set_название_поля_профиля — это кнопка для обновления этого поля.
 #
 #
-# Версия Астробота 2.0
+# Версия Астробота 2.1
 #
 
 #
@@ -430,6 +430,12 @@ async def send_menu(user_id, menu_id, replace_message=0, option_data=False):
             buttons_task = asyncio.ensure_future(get_partner(user_id))
             buttons = await buttons_task + buttons
 
+        elif menu_id == 'partner_add':
+
+            print(f'Пользователь {user_id} добавляет новый профиль в сервис Совместимость')
+            buttons_task = asyncio.ensure_future(add_partner(user_id))
+            buttons = await buttons_task + buttons
+
         row = []  # Список для кнопок в текущем ряду
 
         # Определяем максимальное количество кнопок в ряду в зависимости от количества кнопок
@@ -699,6 +705,19 @@ async def get_partner(user_id, target='hash'):
             print(f'Файл {file_name} не найден.')
 
         return partner_data
+
+
+#
+# Добавляет нового партнёра для пользователя в сервисе Совместимость
+async def add_partner(user_id):
+    # Модуль Совместимость, получение партнёра(ов)
+    partners_dir = os.path.join(users_dir, f'{user_id}/')
+
+    if not os.path.exists(partners_dir):
+        print(f'Каталог для пользователя {user_id} не найден.')
+        return []
+
+    return []
 
 
 #
@@ -1322,7 +1341,10 @@ class ProfileEditor:
                     # Если формат координат верный, разделите их и обработайте отдельно
                     latitude, longitude = map(float, input_data.split(','))
 
+                #
+                # Здесь определяем куда будем записывать введённые пользователем данные
                 user_file_path = os.path.join(users_dir, f'{user_id}.json')
+                print(f'Сохраняю введённые данны в {user_file_path}')
                 
                 if os.path.exists(user_file_path):
                     with open(user_file_path, 'r', encoding='utf-8') as f:
@@ -1336,6 +1358,7 @@ class ProfileEditor:
                 with open(user_file_path, 'w', encoding='utf-8') as f:
                     json.dump(profile, f, ensure_ascii=False)
                 self.expected_field = None
+
                 print(f'Пользователь {user_id} обновил координаты своего местонахождения!')
                 
                 return "Профиль обновлён:\n\n✅ Местоположение"
@@ -1345,8 +1368,11 @@ class ProfileEditor:
                 return f"❗️Введенные данные не соответствуют формату {label}. Пожалуйста, введите данные в правильном формате."
             else:
                 label = self.param_labels[profile_param]
+
+                #
                 # Записываем введенную информацию в файл профиля пользователя
                 user_file_path = os.path.join(users_dir, f'{user_id}.json')
+
                 if os.path.exists(user_file_path):
                     with open(user_file_path, 'r', encoding='utf-8') as f:
                         profile = json.load(f)
@@ -1358,6 +1384,7 @@ class ProfileEditor:
                 
                 self.expected_field = None
                 print(f'Пользователь {user_id} обновил {label}!')
+
                 return f"Профиль обновлён:\n\n✅ {self.param_labels[profile_param]}"
         else:
             if input_data.startswith('cycle_'):
@@ -1499,8 +1526,12 @@ async def handle_location(message):
     input_data = f'{message.location.latitude},{message.location.longitude}'
 
     if profile_editor.expected_field:
-        # Бот ожидает ввода данных профиля
-        response = profile_editor.process_input(user_id, input_data)
+        # Бот ожидает ввода данных профиля,
+        if profile_hash:
+            response = profile_editor.process_input(user_id, input_data, profile_hash)
+        # для профиля сервиса Совместимость
+        else:
+            response = profile_editor.process_input(user_id, input_data)
         keyboard.add(return_button_disallow_delete_msg)
         await bot.reply_to(message, response, reply_markup=keyboard)
 

@@ -1,8 +1,8 @@
 {
     "title": "Добавить партнёра",
     "category": "Совместимость",
-    "url": "/core/get-reply.php?name=partner-add",
-    "message": "Улучшите подписку чтобы воспользоваться сервисом",
+    "url": "/core/get-reply.php?name=partner_add",
+    "message": "Введите ФИО партнёра:",
     "keyboard": [
         {
             "text": "Главное меню",

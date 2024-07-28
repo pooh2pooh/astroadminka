@@ -62,7 +62,11 @@ if (isset($_GET['name']) && !empty($_GET['name'])) {
                     $dates[$key] = $value;
                 } else if ($key == 'category') {
                     //
-                    echo '<label for="' . htmlspecialchars($key) . '">' . htmlspecialchars($key) . ':</label>';
+                    if ($key == "category") {
+                        $name = '<strong>Категория:</strong><br><small class="text-muted">&nbsp;к какой категории относится цикл</small>';
+                    }
+                    echo '<label for="' . htmlspecialchars($key) . '">' . (isset($name) && $name !== null ? $name : htmlspecialchars($key)) . '</label>';
+                    $name = null;
                     echo '<select id="' . htmlspecialchars($key) . '" name="' . htmlspecialchars($key) . '" class="form-control">';
                     foreach ($categories as $category) {
                         $selected = ($category == $value) ? 'selected' : '';
@@ -75,6 +79,13 @@ if (isset($_GET['name']) && !empty($_GET['name'])) {
                     if ($key == "title") {
                         $name = '<strong>Заголовок:</strong><br><small class="text-muted">&nbsp;отображается везде</small>';
                     }
+                    if ($key == "tooltip") {
+                        $name = '<strong>Подсказка:</strong><br><small class="text-muted">&nbsp;тестовая функция для админ-панели, отображает подсказку при наведении курсора на элемент</small>';
+                    }
+                    if ($key == "trigger") {
+                        $name = '<strong>Триггер:</strong><br><small class="text-muted">&nbsp;с помощью него настраивается события для срабатывания цикла</small>';
+                    }
+
                     echo '<label for="' . htmlspecialchars($key) . '">' . (isset($name) && $name !== null ? $name : htmlspecialchars($key)) . '</label>';
                     $name = null;
                     echo '<input type="text" id="' . htmlspecialchars($key) . '" name="' . htmlspecialchars($key) . '" value="' . htmlspecialchars($value) . '" class="form-control"><br>';
