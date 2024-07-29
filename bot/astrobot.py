@@ -8,7 +8,7 @@
 #
 # В data/users файлы профилей пользователей, имя файла это id пользователя в telegram,
 # название полей профиля являются идентификаторами за некоторыми исключениями (типо location вместо latitude и longitude),
-# set_название_поля_профиля — это кнопка для обновления этого поля.
+# set_название_поля_профиля — это кнопка для обновления этого поля.
 #
 #
 # Версия Астробота 2.1
@@ -43,6 +43,7 @@ import math
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
 import random
+import secrets
 
 
 # Настройки бота
@@ -57,6 +58,13 @@ return_button_disallow_delete_msg = telebot.types.InlineKeyboardButton(text='Г�
 
 
 system_message_ids = {} # тут сохраняем id системного сообщения которое нужно удалить после выполнения действий пользователем
+partner_editing = {}
+
+
+#
+# Генерирует хэш для файла профиля партнёра (сервис Совместимость)
+def generate_hash():
+    return secrets.token_urlsafe(6)[:9]
 
 
 #
@@ -376,10 +384,16 @@ async def send_menu(user_id, menu_id, replace_message=0, option_data=False):
                 user_time = user_time + timedelta(days=30)
                 user['date_next_month'] = user_time.strftime('%d.%m.%Y')
 
+
             elif option_data:
-                if menu_id == 'partner_show':
-                    print(f'Совместимость: Загружаю {option_data['title']}')
-                    message = message.format(**option_data)
+
+                data = option_data['data']
+                target = option_data['param_name']
+                if menu_id == 'partner_show' and 'title' in data:
+                    print(f"Совместимость: Загружаю {data['title']}")
+                    message = message.format(**data)
+                    buttons.append({"text": '⛔️ Удалить', "callback": f'partner_del_{target}'})
+
 
             else:
                 print('Не понимаю что загружать…')
@@ -397,8 +411,8 @@ async def send_menu(user_id, menu_id, replace_message=0, option_data=False):
 
             buttons_task = asyncio.ensure_future(get_cycles('Личные'))
             buttons = await buttons_task + buttons
-            if menu_id == 'partner_show':
-                buttons.append({"text": '⛔️ Удалить', "callback": 'partner_del_0'})
+            # if menu_id == 'partner_show':
+            #     buttons.append({"text": '⛔️ Удалить', "callback": 'partner_del_0'})
 
         elif menu_id == 'cycles_investment':
 
@@ -425,16 +439,13 @@ async def send_menu(user_id, menu_id, replace_message=0, option_data=False):
             buttons_task = asyncio.ensure_future(get_allowed_subscriptions(user['subscription']))
             buttons = await buttons_task + buttons
 
+
         elif menu_id == 'compatibility':
 
             buttons_task = asyncio.ensure_future(get_partner(user_id))
-            buttons = await buttons_task + buttons
+            result = await buttons_task
+            buttons = result['data'] + buttons
 
-        elif menu_id == 'partner_add':
-
-            print(f'Пользователь {user_id} добавляет новый профиль в сервис Совместимость')
-            buttons_task = asyncio.ensure_future(add_partner(user_id))
-            buttons = await buttons_task + buttons
 
         row = []  # Список для кнопок в текущем ряду
 
@@ -587,6 +598,96 @@ async def get_update_profile(user_id, user=False, field=False, replace_message=0
     else:
         return False
 
+#
+# Запрашивает данные для профиля партнёра,
+# user - это объект с профилем пользователя, если он уже был запрошен (для предотвращения двойного чтения файла)
+# field — это параметр профиля пользователя (когда нужно обновить один конкретный параметр профиля)
+# replace_message - если не 0, удаляет сообщение перед отправкой нового
+async def get_update_partner(user_id, partner_id, partner=False, replace_message=0):
+
+    print(f'Проверяю профиль партнёра {partner_id} для {user_id}…')
+
+    if partner == False:
+        # Путь к файлу данных пользователя
+        partner_file_path = os.path.join(users_dir, f'{user_id}/{partner_id}.json')
+
+        with open(partner_file_path, 'r', encoding='utf-8') as f:
+            print(f'→ Нашёл профиль партнёра', partner_file_path)
+            partner = json.load(f)
+
+    system_message_id = False
+
+    keyboard = telebot.types.InlineKeyboardMarkup()
+    keyboard.add(return_button)
+
+    if partner['title'] == '':
+        # Если пользователь не заполнял название партнёра (псевдоним)
+        message = await bot.send_message(user_id, profile_editor.start_editing(str(user_id) + ':' + partner_id, "title"), reply_markup=keyboard)
+        system_message_id = message.message_id
+        partner_editing[user_id] = partner_id
+    elif partner['full_name'] == '':
+        # Если пользователь не заполнял ФИО
+        message = await bot.send_message(user_id, profile_editor.start_editing(str(user_id) + ':' + partner_id, "full_name"), reply_markup=keyboard)
+        system_message_id = message.message_id
+        partner_editing[user_id] = partner_id
+    elif partner['sex'] == '':
+        # Если пользователь не заполнял ФИО
+        message = await bot.send_message(user_id, profile_editor.start_editing(str(user_id) + ':' + partner_id, "sex"), reply_markup=keyboard)
+        system_message_id = message.message_id
+        partner_editing[user_id] = partner_id
+    elif partner['birth_day'] == '':
+        # Если пользователь не заполнял День рождения
+        message = await bot.send_message(user_id, profile_editor.start_editing(str(user_id) + ':' + partner_id, "birth_day"), reply_markup=keyboard)
+        system_message_id = message.message_id
+        partner_editing[user_id] = partner_id
+    elif partner['birth_time'] == '':
+        # Если пользователь не заполнял Время рождения
+        message = await bot.send_message(user_id, profile_editor.start_editing(str(user_id) + ':' + partner_id, "birth_time"), reply_markup=keyboard)
+        system_message_id = message.message_id
+        partner_editing[user_id] = partner_id
+    elif partner['timezone'] == '':
+
+        # Создание кнопок для различных часовых поясов
+        time_zone_buttons = [
+            ['GMT-12', 'GMT-11', 'GMT-10', 'GMT-9'],
+            ['GMT-8', 'GMT-7', 'GMT-6', 'GMT-5'],
+            ['GMT-4', 'GMT-3', 'GMT-2', 'GMT-1'],
+            ['GMT-0', 'GMT+1', 'GMT+2', 'GMT+3'],
+            ['GMT+4', 'GMT+5', 'GMT+6', 'GMT+7'],
+            ['GMT+8', 'GMT+9', 'GMT+10', 'GMT+11', 'GMT+12']
+        ]
+
+        # Создание клавиатуры с кнопками часовых поясов
+        keyboard = telebot.types.ReplyKeyboardMarkup(row_width=4, resize_keyboard=True)  # 4 кнопки в ряду
+        for row in time_zone_buttons:
+            keyboard.row(*[telebot.types.KeyboardButton(text) for text in row])
+
+        # Если пользователь не заполнял Часовой пояс
+        message = await bot.send_message(user_id, profile_editor.start_editing(str(user_id) + ':' + partner_id, "timezone"), reply_markup=keyboard)
+        system_message_id = message.message_id
+        partner_editing[user_id] = partner_id
+    elif partner['latitude'] == '' or partner['longitude'] == '':
+
+        # Создание клавиатуры с кнопкой для отправки геолокации
+        keyboard = telebot.types.ReplyKeyboardMarkup(row_width=1, resize_keyboard=True)
+        location_button = telebot.types.KeyboardButton(text="Отправить геолокацию", request_location=True)
+        keyboard.add(location_button)
+
+        # Если пользователь не заполнял Местоположение
+        message = await bot.send_message(user_id, profile_editor.start_editing(str(user_id) + ':' + partner_id, "location"), reply_markup=keyboard)
+        system_message_id = message.message_id
+        partner_editing[user_id] = partner_id
+    elif partner['birth_place'] == '':
+        # Если пользователь не заполнял Место рождения
+        message = await bot.send_message(user_id, profile_editor.start_editing(str(user_id) + ':' + partner_id, "birth_place"), reply_markup=keyboard)
+        system_message_id = message.message_id
+        partner_editing[user_id] = partner_id
+
+    if system_message_id != False:
+        return system_message_id
+    else:
+        return False
+
 
 #
 # Читает файл профиля пользователя и возвращает объект профиля
@@ -665,7 +766,7 @@ async def get_partner(user_id, target='hash'):
 
     if not os.path.exists(partners_dir):
         print(f'Каталог для пользователя {user_id} не найден.')
-        return []
+        return {'data': [], 'param_name': target}
 
     if target == 'hash':
         print(f'Получаю информацию о партнёрах (Совместимость), для {user_id}…')
@@ -687,7 +788,7 @@ async def get_partner(user_id, target='hash'):
             else:
                 print(f'Файл {file_name} не найден.')
 
-        return buttons
+        return {'data': buttons, 'param_name': target}
 
     else:
         print(f'Получаю информацию о партнёре (Совместимость) — {target}, для {user_id}…')
@@ -698,13 +799,13 @@ async def get_partner(user_id, target='hash'):
             with open(file_path, 'r') as f:
                 try:
                     partner_data = json.load(f)
-
+                    return {'data': partner_data, 'param_name': target}
                 except json.JSONDecodeError:
                     print(f'Ошибка чтения файла {file_name}')
+                    return {'data': {}, 'param_name': target}
         else:
             print(f'Файл {file_name} не найден.')
-
-        return partner_data
+            return {'data': {}, 'param_name': target}
 
 
 #
@@ -717,6 +818,25 @@ async def add_partner(user_id):
         print(f'Каталог для пользователя {user_id} не найден.')
         return []
 
+    partner_hash = generate_hash()
+    partner_file_path = os.path.join(partners_dir, f'{partner_hash}.json')
+
+    if not os.path.exists(partner_file_path):
+        with open(partner_file_path, 'w') as partner_file:
+            partner_data = {
+                "title": "",
+                "full_name": "",
+                "sex": "",
+                "birth_day": "",
+                "birth_time": "",
+                "timezone": "",
+                "latitude": "",
+                "longitude": "",
+                "birth_place": ""
+            }
+            json.dump(partner_data, partner_file, ensure_ascii=False, indent=4)
+
+    system_message_ids[user_id] = await get_update_partner(user_id, partner_hash)
     return []
 
 
@@ -1287,7 +1407,9 @@ class ProfileEditor:
     def __init__(self):
         self.expected_field = None
         self.param_labels = {
+            'title': 'Псевдоним',
             'full_name': 'Полное имя (ФИО)',
+            'sex': 'Пол',
             'birth_day': 'Дата рождения (ДД.ММ.ГГГГ)',
             'birth_time': 'Время рождения (ЧЧ:ММ)',
             'timezone': 'Часовой пояс (GMT±N)',
@@ -1295,7 +1417,9 @@ class ProfileEditor:
             'birth_place': 'Место рождения'
         }
         self.param_formats = {
+            'title': r'^[\w\s]+$',
             'full_name': r'^[\w\s]+$',
+            'sex': r'^(?:мужской|женский|м|ж)$',
             'birth_day': r'^\d{2}\.\d{2}\.\d{4}$',
             'birth_time': r'^\d{2}:\d{2}$',
             'timezone': r'^GMT[+-]\d+$',
@@ -1304,6 +1428,7 @@ class ProfileEditor:
         }
 
     def start_editing(self, user_id, profile_param):
+        print(f'>>> DEBUG (start_editing): Работаем с {user_id}')
         # Устанавливаем ожидаемый параметр для ввода
         if profile_param in self.param_labels:
             self.expected_field = profile_param
@@ -1322,6 +1447,7 @@ class ProfileEditor:
             return "❗️Неверный параметр профиля."
 
     def process_input(self, user_id, input_data):
+        print(f'>>> DEBUG (process_input): Работаем с {user_id}')
         if self.expected_field:
             # Обработка ввода
             profile_param = self.expected_field
@@ -1343,7 +1469,13 @@ class ProfileEditor:
 
                 #
                 # Здесь определяем куда будем записывать введённые пользователем данные
-                user_file_path = os.path.join(users_dir, f'{user_id}.json')
+                tmp = str(user_id)
+                if tmp.isdigit():
+                    user_file_path = os.path.join(users_dir, f'{user_id}.json')
+                else:
+                    user_id, partner_id = user_id.split(':')
+                    user_file_path = os.path.join(users_dir, f'{user_id}/{partner_id}.json')
+
                 print(f'Сохраняю введённые данны в {user_file_path}')
                 
                 if os.path.exists(user_file_path):
@@ -1370,8 +1502,14 @@ class ProfileEditor:
                 label = self.param_labels[profile_param]
 
                 #
-                # Записываем введенную информацию в файл профиля пользователя
-                user_file_path = os.path.join(users_dir, f'{user_id}.json')
+                # Записываем введенную информацию в файл профиля пользователя,
+                # пользователя или партнёра
+                tmp = str(user_id)
+                if tmp.isdigit():
+                    user_file_path = os.path.join(users_dir, f'{user_id}.json')
+                else:
+                    user_id, partner_id = user_id.split(':')
+                    user_file_path = os.path.join(users_dir, f'{user_id}/{partner_id}.json')
 
                 if os.path.exists(user_file_path):
                     with open(user_file_path, 'r', encoding='utf-8') as f:
@@ -1497,7 +1635,10 @@ async def handle_message(message):
 
     if profile_editor.expected_field:
         # Бот ожидает ввода данных профиля
-        response = profile_editor.process_input(user_id, message.text)
+        if partner_editing[user_id]:
+            response = profile_editor.process_input(str(user_id) + ':' + partner_editing[user_id], message.text)
+        else:
+            response = profile_editor.process_input(user_id, message.text)
         keyboard.add(return_button_disallow_delete_msg)
         await bot.reply_to(message, response, reply_markup=keyboard)
 
@@ -1505,7 +1646,10 @@ async def handle_message(message):
             await bot.delete_message(user_id, system_message_ids[user_id])
             system_message_ids[user_id] = False
 
-        system_message_ids[user_id] = await get_update_profile(user_id)
+        if partner_editing[user_id]:
+            system_message_ids[user_id] = await get_update_partner(user_id, partner_editing[user_id])
+        else:
+            system_message_ids[user_id] = await get_update_profile(user_id)
     else:
         # Бот не ожидает ввода данных профиля
         #print(message)
@@ -1527,11 +1671,7 @@ async def handle_location(message):
 
     if profile_editor.expected_field:
         # Бот ожидает ввода данных профиля,
-        if profile_hash:
-            response = profile_editor.process_input(user_id, input_data, profile_hash)
-        # для профиля сервиса Совместимость
-        else:
-            response = profile_editor.process_input(user_id, input_data)
+        response = profile_editor.process_input(user_id, input_data)
         keyboard.add(return_button_disallow_delete_msg)
         await bot.reply_to(message, response, reply_markup=keyboard)
 
@@ -1622,15 +1762,40 @@ async def handle_callback_query(call):
     # Кнопки управления партнёрами в сервисе совместимости
     #
     elif call.data == 'partner_add':
-        await send_menu(user_id, 'partner_add', message_id)
+        buttons_task = asyncio.ensure_future(add_partner(user_id))
         await bot.answer_callback_query(call.id)
+    elif call.data.startswith("partner_del_"):
+        # Extract the hash after "partner_del_"
+        partner_hash = call.data[len("partner_del_"):]
+
+        # Construct the file path
+        partner_file_path = f"{users_dir}/{user_id}/{partner_hash}.json"
+
+        keyboard = telebot.types.InlineKeyboardMarkup()
+        keyboard.add(return_button)
+
+        try:
+            # Remove the partner file
+            os.remove(partner_file_path)
+            print(f"{partner_file_path} удалён.")
+            # You might want to send a confirmation message to the user here
+            await bot.send_message(user_id, f"Профиль партнёра {partner_hash} удалён.", reply_markup=keyboard)
+            await bot.answer_callback_query(call.id)
+        except FileNotFoundError:
+            print(f"{partner_file_path} не найден.")
+            await bot.send_message(user_id, f"Профиль партнёра {partner_hash} не найден.", reply_markup=keyboard)
+            await bot.answer_callback_query(call.id)
+        except Exception as e:
+            print(f"Произошла ошибка при удалении файла {partner_file_path}: {e}")
+            await bot.send_message(user_id, f"Произошла ошибка при удалении профиля партнёра {partner_hash}.", reply_markup=keyboard)
+            await bot.answer_callback_query(call.id)
     # Проверка, начинается ли текст кнопки с "partner_"
     elif call.data.startswith("partner_"):
         # Извлечение значения после "partner_"
         param_name = call.data[len("partner_"):]
         option_data = await get_partner(user_id, target=param_name)
 
-        # Вызов функции some_func с параметром param_name
+        # Вызов функции send_menu (partner_show) с параметром param_name
         await send_menu(user_id, 'partner_show', message_id, option_data)
         await bot.answer_callback_query(call.id)
 
